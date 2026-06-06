@@ -3,39 +3,18 @@ package validator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        // 1. Definicja schematu (uproszczona struktura JSON Schema)
-        String schemaJson = """
-            {
-              "type": "object",
-              "properties": {
-                "user": {
-                  "type": "object",
-                  "properties": {
-                    "name": { "type": "string" },
-                    "age": { "type": "number" },
-                    "role": { "type": "string" }
-                  }
-                }
-              }
-            }
-            """;
+        // 1. Wczytaj schemat i instancję JSON z plików
+        File schemaFile = new File("schema.json");
+        File instanceFile = new File("instance.json");
 
-        // 2. Instancja JSON z błędami (zły typ dla age, brak pola role)
-        String instanceJson = """
-            {
-              "user": {
-                "name": "Dawid",
-                "age": "dwadzieścia"
-              }
-            }
-            """;
-
-        JsonNode schema = mapper.readTree(schemaJson);
-        JsonNode instance = mapper.readTree(instanceJson);
+        JsonNode schema = mapper.readTree(schemaFile);
+        JsonNode instance = mapper.readTree(instanceFile);
 
         JsonSchemaValidator validator = new JsonSchemaValidator();
         ValidationResult result = validator.validate(schema, instance);
